@@ -1,0 +1,1 @@
+# Task 1 dependencies — standard library only (csv, sqlite3, re) plus this for later tasks
