@@ -1,0 +1,144 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "8a3ea3af-cfd3-484c-b2ff-d08ff78aa72a",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "17fd2b4f-ebc0-4b52-b3ed-b8f197bc34b8",
+      "name": "Webhook",
+      "webhookId": "8a3ea3af-cfd3-484c-b2ff-d08ff78aa72a"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://snugly-gotten-common.ngrok-free.dev/check-duplicate",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"email\": \"{{ $json.body.email }}\",\n  \"name\": \"{{ $json.body.name }}\",\n  \"phone\": \"{{ $json.body.phone }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "8686047f-73c3-4e0a-995c-2c445008d280",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "1f79ebf9-1ff5-4625-8c0a-f703e6729d69",
+              "leftValue": "={{ $json.duplicate_found }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        0
+      ],
+      "id": "34a96e95-248c-4144-9c1d-8cc8ca4626b3",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8212ec8b-63a3-4e9a-aaac-7fc13995314c",
+              "name": "alert_message",
+              "value": "=Duplicate found: {{ $json.canonical_name }} (matched via {{ $json.match_method }})",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        672,
+        -96
+      ],
+      "id": "f61780d7-b778-4070-93b1-d7a21e8752e8",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "1e0ea21a-6515-4a3c-93d6-c80f50e66523",
+  "meta": {
+    "instanceId": "8a7016d1836c4170f5729cadd0de6b234e2899d8cdbe0e811de6f3b943cec5dc"
+  },
+  "nodeGroups": [],
+  "id": "rjVVcdc1eApfrRoy",
+  "tags": []
+}
